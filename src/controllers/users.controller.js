@@ -33,12 +33,33 @@ async function signUp(req, res) {
 }
 
 async function login(req, res) {
-    const { email, password } = req.locals.user;
+    const { email, password } = res.locals.user;
 
     try {
-        
+        const user = await usersCollection.findOne({ email });
+
+        if (!user || !bcrypt.compareSync(password, user.password)) {
+            return res.sendStatus(401);
+        }
+
+        const token = uuid();
+
+        await sessionsCollection.deleteOne({ userId: user._id });
+
+        await sessionsCollection.insertOne({
+            userId: user._id,
+            token
+        });
+
+        delete user.password;
+
+        res.status(200).send({
+            ...user,
+            token
+        })
+
     } catch (error) {
-        
+        res.status(500).send(error.message);
     }
 };
 
