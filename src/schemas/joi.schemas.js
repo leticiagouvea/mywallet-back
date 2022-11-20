@@ -12,6 +12,12 @@ const loginSchema = joi.object({
     password: joi.string().required().min(6)
 });
 
+const valueSchema = joi.object({
+    value: joi.number().required(),
+    text: joi.string().required(),
+    type: joi.valid("input", "output").required()
+});
+
 async function validateSignUp(req, res, next) {
     const { name, email, password, confirmPassword } = req.body;
 
@@ -46,4 +52,19 @@ async function validateLogin(req, res, next) {
     next();
 }
 
-export { validateLogin, validateSignUp };
+async function validateValue(req, res, next) {
+    const { value, text, type } = req.body;
+
+    const validation = valueSchema.validate(req.body, { abortEarly: false });
+
+    if (validation.error) {
+        const error = validation.error.details.map(detail => detail.message);
+        return res.status(422).send(error);
+    }
+
+    res.locals.value = { value, text, type };
+
+    next();
+}
+
+export { validateLogin, validateSignUp, validateValue };

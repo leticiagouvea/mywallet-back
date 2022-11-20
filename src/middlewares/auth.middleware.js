@@ -6,6 +6,8 @@ async function validateToken(req, res, next) {
         return res.sendStatus(401);
     }
 
+    res.locals.token = { token };
+
     next();
 }
 

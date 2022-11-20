@@ -4,7 +4,8 @@ import { validateSignUp, validateLogin } from "../schemas/joi.schemas.js";
 
 const router = Router();
 
-router.post("/sign-up", validateSignUp, signUp);
-router.post("/login", validateLogin, login);
+router
+  .post("/sign-up", validateSignUp, signUp)
+  .post("/login", validateLogin, login);
 
 export default router;
