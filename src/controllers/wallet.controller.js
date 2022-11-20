@@ -34,4 +34,33 @@ async function insertValue(req, res) {
   }
 }
 
-export { insertValue };
+async function getValues(req, res) {
+  const { token } = res.locals.token;
+
+  try {
+    const session = await sessionsCollection.findOne({ token });
+
+    if (!session) {
+      return res.sendStatus(401);
+    }
+
+    const user = await usersCollection.findOne({
+      _id: session.userId
+    });
+
+    if(!user) {
+      return res.sendStatus(401);
+    }
+
+    const values = await valuesCollection.find({
+      userId: user._id
+    }).toArray();
+
+    res.status(200).send(values);
+
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export { insertValue, getValues };
