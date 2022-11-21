@@ -77,9 +77,8 @@ async function updateValue(req, res) {
     });
 
     if (!isValue) {
-      return res.sendStatus(400);
+      return res.sendStatus(404);
     }
-    console.log(isValue)
 
     await valuesCollection.updateOne({
       _id: new ObjectId(id)
@@ -98,4 +97,31 @@ async function updateValue(req, res) {
   }
 }
 
-export { insertValue, getValues, updateValue };
+async function deleteValue(req, res) {
+  const { id } = req.params;
+
+  if(!id) {
+    return res.sendStatus(400);
+  }
+
+  try {
+    const isValue = await valuesCollection.findOne({
+      _id: new ObjectId(id)
+    });
+
+    if (!isValue) {
+      return res.sendStatus(404);
+    }
+
+    await valuesCollection.deleteOne({
+      _id: new ObjectId(id)
+    });
+
+    res.sendStatus(200);
+
+  } catch (error) {
+    res.status(500).send(error.message); 
+  }
+}
+
+export { insertValue, getValues, updateValue, deleteValue };

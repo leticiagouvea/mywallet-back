@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { insertValue, getValues, updateValue } from "../controllers/wallet.controller.js";
+import { insertValue, getValues, updateValue, deleteValue } from "../controllers/wallet.controller.js";
 import { validateValue } from "../schemas/joi.schemas.js";
 import { validateToken } from "../middlewares/auth.middleware.js";
 
@@ -9,6 +9,7 @@ router
   .all("/*", validateToken)
   .post("/wallet", validateValue, insertValue)
   .get("/wallet", getValues)
-  .put("/wallet/:id", validateValue, updateValue);
+  .put("/wallet/:id", validateValue, updateValue)
+  .delete("/wallet/:id", deleteValue);
 
 export default router;
