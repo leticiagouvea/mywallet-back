@@ -63,4 +63,39 @@ async function getValues(req, res) {
   }
 }
 
-export { insertValue, getValues };
+async function updateValue(req, res) {
+  const { id } = req.params;
+  const { value, text, type } = res.locals.value;
+
+  if(!id) {
+    return res.sendStatus(400);
+  }
+
+  try {
+    const isValue = await valuesCollection.findOne({
+      _id: new ObjectId(id)
+    });
+
+    if (!isValue) {
+      return res.sendStatus(400);
+    }
+    console.log(isValue)
+
+    await valuesCollection.updateOne({
+      _id: new ObjectId(id)
+    }, {
+      $set: {
+        value,
+        text,
+        type
+      }
+    });
+
+    res.sendStatus(200);
+
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+}
+
+export { insertValue, getValues, updateValue };
