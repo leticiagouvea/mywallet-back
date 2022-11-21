@@ -65,7 +65,7 @@ async function getValues(req, res) {
 
 async function updateValue(req, res) {
   const { id } = req.params;
-  const { value, text, type } = res.locals.value;
+  const { value, text } = res.locals.value;
 
   if(!id) {
     return res.sendStatus(400);
@@ -85,8 +85,7 @@ async function updateValue(req, res) {
     }, {
       $set: {
         value,
-        text,
-        type
+        text
       }
     });
 

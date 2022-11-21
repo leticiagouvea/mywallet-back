@@ -18,6 +18,11 @@ const valueSchema = joi.object({
     type: joi.valid("input", "output").required()
 });
 
+const updateValueSchema = joi.object({
+    value: joi.number().required(),
+    text: joi.string().required(),
+})
+
 async function validateSignUp(req, res, next) {
     const { name, email, password, confirmPassword } = req.body;
 
@@ -67,4 +72,19 @@ async function validateValue(req, res, next) {
     next();
 }
 
-export { validateLogin, validateSignUp, validateValue };
+async function validateUpdateValue(req, res, next) {
+    const { value, text } = req.body;
+
+    const validation = updateValueSchema.validate(req.body, { abortEarly: false });
+
+    if (validation.error) {
+        const error = validation.error.details.map(detail => detail.message);
+        return res.status(422).send(error);
+    }
+
+    res.locals.value = { value, text };
+
+    next();
+}
+
+export { validateLogin, validateSignUp, validateValue, validateUpdateValue };
